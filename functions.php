@@ -1,4 +1,6 @@
 <?php
+
+
 function getSensorData($start, $end)
 {
     $db = getDatabase();
@@ -6,13 +8,27 @@ function getSensorData($start, $end)
     $statement->execute([$start, $end]);
     return $statement->fetchAll();
 }
+
 function saveDhtData($temperature, $humidity)
 {
+
+    # Antes de configurar zona horaria
+    echo "\n\nFecha y hora actual: " . date("Y-m-d H:i:s");
+# Configurar
+    date_default_timezone_set("America/Mexico_City");
+# Después de configurar
+    echo "\n\nFecha y hora actual: " . date("Y-m-d H:i:s");
+    //dos lineas agregadas
+    $now = new DateTime();
+    echo $now->getTimestamp();
+
+
     $db = getDatabase();
-    $currentDate = date("Y-m-d H:i:s");
+    $currentDate = date("d/m/Y h:i:s a", time());
     $statement = $db->prepare("INSERT INTO dht_log(date, temperature, humidity) VALUES (?, ?, ?)");
     return $statement->execute([$currentDate, $temperature, $humidity]);
 }
+
 function getVarFromEnvironmentVariables($key)
 {
     if (defined("_ENV_CACHE")) {
